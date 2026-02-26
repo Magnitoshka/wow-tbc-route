@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Alliance Crest">
+  <defs>
+    <linearGradient id="a1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9fd0ff"/>
+      <stop offset="1" stop-color="#2f6cab"/>
+    </linearGradient>
+  </defs>
+  <path d="M32 4l20 8v16c0 14-7 24-20 32C19 52 12 42 12 28V12l20-8z" fill="url(#a1)" stroke="#dfefff" stroke-width="2"/>
+  <path d="M32 16l9 18h-6v14h-6V34h-6l9-18z" fill="#f8fbff"/>
+  <circle cx="32" cy="12" r="2.3" fill="#f8fbff"/>
+</svg>
