@@ -48,6 +48,56 @@ const CLASSIC_TBC_DUNGEON_NAMES = new Set([
   "The Arcatraz",
   "Magisters' Terrace",
 ]);
+const SCARLET_MONASTERY = "Scarlet Monastery";
+const SCARLET_WING_ORDER = ["Graveyard", "Library", "Armory", "Cathedral", "Event"];
+const SCARLET_WING_LEVELS = {
+  Graveyard: [28, 34],
+  Library: [32, 39],
+  Armory: [35, 45],
+  Cathedral: [38, 45],
+  Event: [70, 70],
+};
+const SCARLET_BOSS_TO_WING = {
+  "Bloodmage Thalnos": "Graveyard",
+  "Interrogator Vishas": "Graveyard",
+  "Azshir the Sleepless": "Graveyard",
+  "Fallen Champion": "Graveyard",
+  Ironspine: "Graveyard",
+  "Houndmaster Loksey": "Library",
+  "Arcanist Doan": "Library",
+  Herod: "Armory",
+  "Scarlet Trainee": "Armory",
+  "Scarlet Commander Mograine": "Cathedral",
+  "High Inquisitor Whitemane": "Cathedral",
+  "High Inquisitor Fairbanks": "Cathedral",
+  "Scarlet Champion": "Cathedral",
+  "Scarlet Centurion": "Cathedral",
+  Scorn: "Cathedral",
+  "Headless Horseman": "Event",
+};
+
+function splitScarletMonasteryDungeon(dungeon) {
+  if (dungeon.name !== SCARLET_MONASTERY) return [dungeon];
+
+  return SCARLET_WING_ORDER.map((wing) => {
+    const wingBosses = dungeon.bosses.filter(
+      (boss) => (SCARLET_BOSS_TO_WING[boss.name] || "Other") === wing,
+    );
+    if (wingBosses.length === 0) return null;
+    const [levelMin, levelMax] = SCARLET_WING_LEVELS[wing] || [
+      dungeon.levelMin,
+      dungeon.levelMax,
+    ];
+    return {
+      ...dungeon,
+      id: `${dungeon.id}-${wing.toLowerCase()}`,
+      name: `${SCARLET_MONASTERY}: ${wing}`,
+      levelMin,
+      levelMax,
+      bosses: wingBosses,
+    };
+  }).filter(Boolean);
+}
 
 function canUnlock(quest, completed) {
   if (!quest.prereq || quest.prereq.length === 0) return true;
@@ -324,6 +374,7 @@ export default function App() {
   const dungeonListForLevel = useMemo(() => {
     return [...dungeons]
       .filter((dungeon) => CLASSIC_TBC_DUNGEON_NAMES.has(dungeon.name))
+      .flatMap((dungeon) => splitScarletMonasteryDungeon(dungeon))
       .sort((a, b) => a.levelMin - b.levelMin);
   }, []);
   const selectedDungeon = useMemo(() => {
@@ -331,9 +382,13 @@ export default function App() {
     return dungeonListForLevel.find((dungeon) => dungeon.id === selectedDungeonId) || null;
   }, [dungeonListForLevel, selectedDungeonId]);
   const selectedBoss = useMemo(() => {
-    if (!selectedDungeon) return null;
+    if (!selectedDungeon || !selectedDungeon.bosses.length) return null;
     if (!selectedBossId) return selectedDungeon.bosses[0] || null;
-    return selectedDungeon.bosses.find((b) => b.id === selectedBossId) || selectedDungeon.bosses[0] || null;
+    return (
+      selectedDungeon.bosses.find((b) => b.id === selectedBossId) ||
+      selectedDungeon.bosses[0] ||
+      null
+    );
   }, [selectedDungeon, selectedBossId]);
 
   const autoCompletedIds = useMemo(() => {
@@ -520,7 +575,7 @@ export default function App() {
       return;
     }
     if (!selectedBossId || !selectedDungeon.bosses.some((boss) => boss.id === selectedBossId)) {
-      setSelectedBossId(selectedDungeon.bosses[0].id);
+      setSelectedBossId(selectedDungeon.bosses[0]?.id || null);
     }
   }, [selectedDungeon, selectedBossId]);
   useEffect(() => {
