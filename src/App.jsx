@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   classList,
   quests,
@@ -7,6 +8,7 @@ import {
   sourceLinks,
   raceList,
 } from "./quests";
+import { dungeons } from "./dungeons";
 
 function canUnlock(quest, completed) {
   if (!quest.prereq || quest.prereq.length === 0) return true;
@@ -108,6 +110,83 @@ function loadPersistedState() {
   }
 }
 
+function getFilteredTooltipLines(item) {
+  const name = String(item?.name || "").trim().toLowerCase();
+  const type = String(item?.type || "").trim().toLowerCase();
+  const slot = String(item?.slot || "").trim().toLowerCase();
+  const duplicatePatterns = [
+    /^dropped by:/i,
+    /^drop chance:/i,
+    /^sell price:?/i,
+    /^durability\b/i,
+    /^phase\b/i,
+  ];
+
+  return (item?.tooltip || []).filter((line) => {
+    const raw = String(line?.label || "").trim();
+    if (!raw) return false;
+    const normalized = raw.toLowerCase();
+    if (normalized === name) return false;
+    if (type && normalized === type) return false;
+    if (slot && normalized === slot) return false;
+    if (duplicatePatterns.some((pattern) => pattern.test(raw))) return false;
+    return true;
+  });
+}
+
+function buildTooltipRows(item) {
+  const lines = getFilteredTooltipLines(item);
+  const rows = [];
+
+  lines.forEach((line) => {
+    if (line.format === "alignRight" && rows.length > 0) {
+      rows[rows.length - 1].right = line.label;
+      return;
+    }
+
+    rows.push({
+      left: line.label,
+      right: "",
+      format: line.format || "",
+      sourceIndex: rows.length,
+    });
+  });
+
+  const rank = (text) => {
+    const value = String(text || "");
+    if (/^item level\b/i.test(value)) return 10;
+    if (/^binds when/i.test(value)) return 20;
+    if (/^(head|neck|shoulder|back|chest|wrist|hands|waist|legs|feet|finger|trinket|one-hand|two-hand|main hand|off hand|ranged|held in off-hand|shield)$/i.test(value)) return 30;
+    if (/^(armor|\d+\s*armor|\d+\s*-\s*\d+\s*damage|speed\b|\+\d+)/i.test(value)) return 40;
+    if (/socket/i.test(value)) return 50;
+    if (/^requires level\b/i.test(value)) return 60;
+    if (/^(equip:|use:|chance on hit:|chance on spell hit:)/i.test(value)) return 70;
+    return 80;
+  };
+
+  return rows
+    .map((row, idx) => ({ ...row, idx, weight: rank(row.left) }))
+    .sort((a, b) => a.weight - b.weight || a.idx - b.idx)
+    .map(({ sourceIndex, idx, weight, ...clean }) => clean);
+}
+
+function getTooltipToneClass(text, format = "") {
+  const value = String(text || "");
+  if (format === "Misc") return "tooltip-tone--misc";
+  if (/^item level\b/i.test(value)) return "tooltip-tone--ilevel";
+  if (/^requires level\b/i.test(value)) return "tooltip-tone--req";
+  if (/^(equip:|use:|chance on hit:|chance on spell hit:)/i.test(value)) return "tooltip-tone--equip";
+  if (/^\+\d+/.test(value)) return "tooltip-tone--stat";
+  if (/^meta socket\b/i.test(value)) return "tooltip-tone--socket-meta";
+  if (/^blue socket\b/i.test(value)) return "tooltip-tone--socket-blue";
+  if (/^red socket\b/i.test(value)) return "tooltip-tone--socket-red";
+  if (/^yellow socket\b/i.test(value)) return "tooltip-tone--socket-yellow";
+  if (/^socket bonus\b/i.test(value)) return "tooltip-tone--socket-bonus";
+  if (/^socket/i.test(value)) return "tooltip-tone--socket";
+  if (/^binds when/i.test(value)) return "tooltip-tone--bind";
+  return "";
+}
+
 export default function App() {
   const persisted = useMemo(() => loadPersistedState(), []);
   const [now, setNow] = useState(() => new Date());
@@ -141,6 +220,43 @@ export default function App() {
   const [hidingIds, setHidingIds] = useState(
     () => new Set(Array.isArray(persisted?.completedIds) ? persisted.completedIds : []),
   );
+  const [selectedDungeonId, setSelectedDungeonId] = useState(null);
+  const [selectedBossId, setSelectedBossId] = useState(null);
+  const [tooltipData, setTooltipData] = useState(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ left: 0, top: 0, below: false });
+  const tooltipRef = useRef(null);
+  const pointerRef = useRef({ x: 0, y: 0 });
+  const updateTooltipPosition = () => {
+    if (!tooltipData) return;
+    const margin = 12;
+    const offset = 16;
+    const width = tooltipRef.current?.offsetWidth || 220;
+    const height = tooltipRef.current?.offsetHeight || 220;
+    const viewportW = window.innerWidth;
+    const viewportH = window.innerHeight;
+    const x = Number.isFinite(pointerRef.current.x) ? pointerRef.current.x : viewportW / 2;
+    const y = Number.isFinite(pointerRef.current.y) ? pointerRef.current.y : viewportH / 2;
+
+    let left = x + offset;
+    if (left + width > viewportW - margin) {
+      left = x - width - offset;
+    }
+    if (left < margin) {
+      left = Math.max(margin, viewportW - width - margin);
+    }
+
+    let below = false;
+    let top = y - height - offset;
+    if (top < margin) {
+      top = y + offset;
+      below = true;
+    }
+    if (top + height > viewportH - margin) {
+      top = Math.max(margin, viewportH - height - margin);
+    }
+
+    setTooltipPosition({ left, top, below });
+  };
 
   const normalizedStartLevel = clampLevel(startLevel);
   const normalizedCurrentLevel = clampLevel(currentLevel);
@@ -163,6 +279,21 @@ export default function App() {
   const questLevelById = useMemo(() => {
     return new Map(quests.map((quest) => [quest.id, Number(quest.level)]));
   }, []);
+  const levelForDungeons = isConfigured
+    ? normalizedCurrentLevel
+    : normalizedStartLevel;
+  const dungeonListForLevel = useMemo(() => {
+    return [...dungeons].sort((a, b) => a.levelMin - b.levelMin);
+  }, []);
+  const selectedDungeon = useMemo(() => {
+    if (!selectedDungeonId) return dungeonListForLevel[0] || null;
+    return dungeonListForLevel.find((dungeon) => dungeon.id === selectedDungeonId) || null;
+  }, [dungeonListForLevel, selectedDungeonId]);
+  const selectedBoss = useMemo(() => {
+    if (!selectedDungeon) return null;
+    if (!selectedBossId) return selectedDungeon.bosses[0] || null;
+    return selectedDungeon.bosses.find((b) => b.id === selectedBossId) || selectedDungeon.bosses[0] || null;
+  }, [selectedDungeon, selectedBossId]);
 
   const autoCompletedIds = useMemo(() => {
     return new Set(
@@ -333,6 +464,44 @@ export default function App() {
     if (allowedRacesForFaction.includes(race)) return;
     setRace("Any");
   }, [allowedRacesForFaction, race]);
+  useEffect(() => {
+    if (dungeonListForLevel.length === 0) {
+      setSelectedDungeonId(null);
+      return;
+    }
+    if (!selectedDungeonId || !dungeonListForLevel.some((d) => d.id === selectedDungeonId)) {
+      setSelectedDungeonId(dungeonListForLevel[0].id);
+    }
+  }, [dungeonListForLevel, selectedDungeonId]);
+  useEffect(() => {
+    if (!selectedDungeon || selectedDungeon.bosses.length === 0) {
+      setSelectedBossId(null);
+      return;
+    }
+    if (!selectedBossId || !selectedDungeon.bosses.some((boss) => boss.id === selectedBossId)) {
+      setSelectedBossId(selectedDungeon.bosses[0].id);
+    }
+  }, [selectedDungeon, selectedBossId]);
+  useEffect(() => {
+    if (!tooltipData) return;
+    updateTooltipPosition();
+  }, [tooltipData]);
+
+  const openLootTooltip = (item, event) => {
+    const x = Number.isFinite(event?.clientX) ? event.clientX : window.innerWidth / 2;
+    const y = Number.isFinite(event?.clientY) ? event.clientY : window.innerHeight / 2;
+    pointerRef.current = { x, y };
+    setTooltipData({ item, bossName: selectedBoss?.name || "" });
+  };
+
+  const moveLootTooltip = (event) => {
+    if (!tooltipData) return;
+    if (!Number.isFinite(event?.clientX) || !Number.isFinite(event?.clientY)) return;
+    pointerRef.current = { x: event.clientX, y: event.clientY };
+    updateTooltipPosition();
+  };
+
+  const closeLootTooltip = () => setTooltipData(null);
 
   return (
     <main className="page">
@@ -392,6 +561,126 @@ export default function App() {
           <strong>Зона квестов:</strong> {currentQuestZone}
         </div>
       </aside>
+
+      <section className="dungeon-panel" aria-label="Список данжей и лут">
+        <div className="dungeon-panel__header">
+          <h2>Все данжи Classic + TBC</h2>
+          <span>Текущий ориентир уровня: {levelForDungeons} (подсветка доступных)</span>
+        </div>
+
+        <div className="dungeon-panel__layout">
+          <ul className="dungeon-list" role="listbox" aria-label="Список данжей">
+            {dungeonListForLevel.map((dungeon) => (
+              <li key={dungeon.id}>
+                <button
+                  type="button"
+                  className={`dungeon-row ${selectedDungeon?.id === dungeon.id ? "dungeon-row--active" : ""} ${levelForDungeons >= dungeon.levelMin && levelForDungeons <= dungeon.levelMax ? "dungeon-row--recommended" : ""}`}
+                  onClick={() => setSelectedDungeonId(dungeon.id)}
+                >
+                  <span className="dungeon-row__name">{dungeon.name}</span>
+                  <span className="dungeon-row__meta">
+                    {dungeon.levelMin}-{dungeon.levelMax} | {dungeon.location}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <div className="dungeon-loot">
+            {!selectedDungeon ? (
+              <p className="empty-state">Для этого уровня данжи не найдены.</p>
+            ) : (
+              <>
+                <h3>{selectedDungeon.name}</h3>
+                <p className="dungeon-loot__sub">
+                  Уровни: {selectedDungeon.levelMin}-{selectedDungeon.levelMax} | {selectedDungeon.location}
+                </p>
+                <ul className="boss-list" role="tablist" aria-label="Список боссов данжа">
+                  {selectedDungeon.bosses.map((boss) => (
+                    <li key={boss.id}>
+                      <button
+                        type="button"
+                        className={`boss-chip ${selectedBoss?.id === boss.id ? "boss-chip--active" : ""}`}
+                        onClick={() => setSelectedBossId(boss.id)}
+                      >
+                        {boss.name}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+
+                <ul className="loot-list">
+                  {(selectedBoss?.loot || []).map((item) => (
+                    <li key={`${selectedDungeon.id}-${item.id}`} className="loot-item">
+                      <button
+                        type="button"
+                        className="loot-icon-btn"
+                        onMouseEnter={(event) => openLootTooltip(item, event)}
+                        onMouseMove={moveLootTooltip}
+                        onMouseLeave={closeLootTooltip}
+                        onFocus={(event) => {
+                          const rect = event.currentTarget.getBoundingClientRect();
+                          openLootTooltip(item, {
+                            clientX: rect.left + rect.width / 2,
+                            clientY: rect.top + rect.height / 2,
+                          });
+                        }}
+                        onBlur={closeLootTooltip}
+                      >
+                        <img
+                          src={item.icon}
+                          alt={item.name}
+                          loading="lazy"
+                          onError={(event) => {
+                            event.currentTarget.src = "https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg";
+                          }}
+                        />
+                        <span className={`loot-rarity loot-rarity--${item.rarity.toLowerCase()}`}>{item.name}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                {tooltipData &&
+                  createPortal(
+                    <div
+                      ref={tooltipRef}
+                      className={`loot-tooltip-float ${tooltipPosition.below ? "loot-tooltip-float--below" : ""}`}
+                      role="tooltip"
+                      style={{
+                        left: `${tooltipPosition.left}px`,
+                        top: `${tooltipPosition.top}px`,
+                      }}
+                    >
+                    <strong className={`loot-tooltip__name loot-tooltip__name--${tooltipData.item.rarity.toLowerCase()}`}>
+                      {tooltipData.item.name}
+                    </strong>
+                    {buildTooltipRows(tooltipData.item).map((row, idx) => (
+                      <div
+                        key={`${tooltipData.item.id}-${idx}`}
+                        className={`loot-tooltip__row ${row.format ? `loot-tooltip__row--${row.format}` : ""}`}
+                      >
+                        <span
+                          className={`loot-tooltip__line ${row.format ? `loot-tooltip__line--${row.format}` : ""} ${getTooltipToneClass(row.left, row.format)}`}
+                        >
+                          {row.left}
+                        </span>
+                        {row.right && (
+                          <span
+                            className={`loot-tooltip__line loot-tooltip__line--right ${getTooltipToneClass(row.right, row.format)}`}
+                          >
+                            {row.right}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>,
+                  document.body,
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </section>
 
       <section className="board">
         <header className="board__header">

@@ -15,8 +15,11 @@ body {
 
 .page {
   min-height: 100vh;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
   padding: 20px 12px;
 }
 
@@ -94,6 +97,328 @@ body {
   padding: 20px;
   backdrop-filter: blur(4px);
 }
+
+.dungeon-panel {
+  width: min(960px, 100%);
+  background: rgba(20, 15, 10, 0.72);
+  border: 1px solid rgba(255, 214, 143, 0.3);
+  border-radius: 14px;
+  padding: 14px;
+  backdrop-filter: blur(4px);
+}
+
+.dungeon-panel__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.dungeon-panel__header h2 {
+  margin: 0;
+  color: #f0d8a2;
+  font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+}
+
+.dungeon-panel__header span {
+  color: #cdbd9f;
+  font-size: 0.9rem;
+}
+
+.dungeon-panel__layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) 1fr;
+  gap: 12px;
+}
+
+.dungeon-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.dungeon-row {
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(255, 214, 143, 0.22);
+  background: rgba(10, 8, 6, 0.78);
+  border-radius: 10px;
+  color: #e5d2ab;
+  padding: 10px;
+  display: grid;
+  gap: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.dungeon-row:hover {
+  border-color: rgba(255, 219, 153, 0.45);
+}
+
+.dungeon-row--active {
+  border-color: rgba(255, 219, 153, 0.7);
+  box-shadow: 0 0 0 1px rgba(190, 136, 49, 0.2) inset;
+}
+
+.dungeon-row--recommended {
+  background: linear-gradient(180deg, rgba(41, 31, 18, 0.95) 0%, rgba(20, 15, 9, 0.95) 100%);
+}
+
+.dungeon-row__name {
+  font-weight: 700;
+  color: #f6e2b8;
+}
+
+.dungeon-row__meta {
+  font-size: 0.82rem;
+  color: #bfae92;
+}
+
+.dungeon-loot {
+  background: rgba(10, 8, 6, 0.76);
+  border: 1px solid rgba(255, 214, 143, 0.2);
+  border-radius: 10px;
+  padding: 12px;
+  min-height: 270px;
+}
+
+.dungeon-loot h3 {
+  margin: 0;
+  color: #f5e2ba;
+}
+
+.boss-list {
+  list-style: none;
+  margin: 8px 0 10px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.boss-chip {
+  border: 1px solid rgba(255, 214, 143, 0.25);
+  background: rgba(27, 21, 13, 0.95);
+  color: #e7d4ac;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.boss-chip--active {
+  border-color: rgba(255, 219, 153, 0.62);
+  color: #f6e5bf;
+}
+
+.dungeon-loot__sub {
+  margin: 6px 0 10px;
+  color: #cdbd9f;
+  font-size: 0.86rem;
+}
+
+.loot-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(126px, 1fr));
+  gap: 10px;
+}
+
+.loot-item {
+  min-height: 120px;
+}
+
+.loot-rarity {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.74rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.loot-rarity--uncommon {
+  color: #1eff00;
+}
+
+.loot-rarity--common {
+  color: #ffffff;
+}
+
+.loot-rarity--rare {
+  color: #0070dd;
+}
+
+.loot-rarity--epic {
+  color: #a335ee;
+}
+
+.loot-rarity--legendary {
+  color: #ff8000;
+}
+
+.loot-rarity--poor {
+  color: #9d9d9d;
+}
+
+.loot-rarity--artifact {
+  color: #e6cc80;
+}
+
+.loot-icon-btn {
+  width: 100%;
+  border: 1px solid rgba(255, 214, 143, 0.22);
+  background: rgba(17, 12, 7, 0.94);
+  border-radius: 8px;
+  color: inherit;
+  padding: 8px 6px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.loot-icon-btn img {
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(236, 198, 125, 0.5);
+  border-radius: 6px;
+  display: block;
+  margin: 0 auto;
+  object-fit: cover;
+  background: #0d0906;
+}
+
+.loot-tooltip-float {
+  position: fixed;
+  width: min(320px, calc(100vw - 24px));
+  background: linear-gradient(180deg, rgba(1, 8, 40, 0.98) 0%, rgba(1, 14, 56, 0.98) 100%);
+  border: 1px solid rgba(122, 162, 255, 0.9);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.58), inset 0 0 0 1px rgba(22, 51, 138, 0.45);
+  text-align: left;
+  z-index: 45;
+  pointer-events: none;
+}
+
+.loot-tooltip-float--below {
+  border-color: rgba(255, 224, 161, 0.46);
+}
+
+.loot-tooltip__line,
+.loot-tooltip__name {
+  display: block;
+  font-size: 0.88rem;
+  line-height: 1.25;
+  color: #ffffff;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.loot-tooltip__name {
+  margin-bottom: 6px;
+}
+
+.loot-tooltip-float .loot-tooltip__name--uncommon {
+  color: #1eff00;
+}
+
+.loot-tooltip-float .loot-tooltip__name--rare {
+  color: #0070dd;
+}
+
+.loot-tooltip-float .loot-tooltip__name--epic {
+  color: #a335ee;
+}
+
+.loot-tooltip-float .loot-tooltip__name--legendary {
+  color: #ff8000;
+}
+
+.loot-tooltip-float .loot-tooltip__name--common {
+  color: #ffffff;
+}
+
+.loot-tooltip-float .loot-tooltip__name--poor {
+  color: #9d9d9d;
+}
+
+.loot-tooltip__line--Misc {
+  color: #9d9d9d;
+}
+
+.loot-tooltip__line--alignRight {
+  text-align: right;
+}
+
+.loot-tooltip__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.loot-tooltip__line--right {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.loot-tooltip-float .tooltip-tone--misc {
+  color: #9d9d9d;
+}
+
+.loot-tooltip-float .tooltip-tone--ilevel {
+  color: #ffd100;
+  font-weight: 700;
+}
+
+.loot-tooltip-float .tooltip-tone--req {
+  color: #ffd100;
+}
+
+.loot-tooltip-float .tooltip-tone--equip {
+  color: #00ff00;
+}
+
+.loot-tooltip-float .tooltip-tone--stat {
+  color: #ffffff;
+}
+
+.loot-tooltip-float .tooltip-tone--socket {
+  color: #9ad3ff;
+}
+
+.loot-tooltip-float .tooltip-tone--socket-meta {
+  color: #9d9d9d;
+}
+
+.loot-tooltip-float .tooltip-tone--socket-blue {
+  color: #4da3ff;
+}
+
+.loot-tooltip-float .tooltip-tone--socket-red {
+  color: #ff6b6b;
+}
+
+.loot-tooltip-float .tooltip-tone--socket-yellow {
+  color: #ffd34d;
+}
+
+.loot-tooltip-float .tooltip-tone--socket-bonus {
+  color: #d2d2d2;
+}
+
+.tooltip-tone--bind {
+  color: #ffffff;
+}
+
 
 .board__header {
   display: block;
@@ -490,7 +815,7 @@ input[type="number"]::-webkit-inner-spin-button {
 .site-footer {
   position: fixed;
   left: 50%;
-  bottom: 100px;
+  bottom: 24px;
   transform: translateX(-50%);
   z-index: 25;
   display: flex;
@@ -554,6 +879,14 @@ input[type="number"]::-webkit-inner-spin-button {
 
   .board {
     padding: 14px;
+  }
+
+  .dungeon-panel {
+    padding: 12px;
+  }
+
+  .dungeon-panel__layout {
+    grid-template-columns: 1fr;
   }
 
   .filters {
