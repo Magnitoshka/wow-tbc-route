@@ -3,17 +3,21 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "homepage": "https://magnitoshka.github.io/wow-tbc-route/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "download:zone-images": "node scripts/download-zone-images.mjs"
+    "download:zone-images": "node scripts/download-zone-images.mjs",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "gh-pages": "^6.1.1",
     "vite": "^5.4.10"
   }
 }
