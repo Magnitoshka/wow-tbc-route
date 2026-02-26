@@ -10,6 +10,45 @@ import {
 } from "./quests";
 import { dungeons } from "./dungeons";
 
+const CLASSIC_TBC_DUNGEON_NAMES = new Set([
+  "Ragefire Chasm",
+  "Wailing Caverns",
+  "The Deadmines",
+  "Shadowfang Keep",
+  "Blackfathom Deeps",
+  "The Stockade",
+  "Gnomeregan",
+  "Razorfen Kraul",
+  "Scarlet Monastery",
+  "Razorfen Downs",
+  "Uldaman",
+  "Zul'Farrak",
+  "Maraudon",
+  "Temple of Atal'Hakkar",
+  "Blackrock Depths",
+  "Lower Blackrock Spire",
+  "Upper Blackrock Spire",
+  "Dire Maul",
+  "Scholomance",
+  "Stratholme",
+  "Hellfire Ramparts",
+  "The Blood Furnace",
+  "The Shattered Halls",
+  "The Slave Pens",
+  "The Underbog",
+  "The Steamvault",
+  "Mana-Tombs",
+  "Auchenai Crypts",
+  "Sethekk Halls",
+  "Shadow Labyrinth",
+  "Old Hillsbrad Foothills",
+  "The Black Morass",
+  "The Mechanar",
+  "The Botanica",
+  "The Arcatraz",
+  "Magisters' Terrace",
+]);
+
 function canUnlock(quest, completed) {
   if (!quest.prereq || quest.prereq.length === 0) return true;
   if (quest.anyPrereq) return quest.prereq.some((id) => completed.has(id));
@@ -283,7 +322,9 @@ export default function App() {
     ? normalizedCurrentLevel
     : normalizedStartLevel;
   const dungeonListForLevel = useMemo(() => {
-    return [...dungeons].sort((a, b) => a.levelMin - b.levelMin);
+    return [...dungeons]
+      .filter((dungeon) => CLASSIC_TBC_DUNGEON_NAMES.has(dungeon.name))
+      .sort((a, b) => a.levelMin - b.levelMin);
   }, []);
   const selectedDungeon = useMemo(() => {
     if (!selectedDungeonId) return dungeonListForLevel[0] || null;
