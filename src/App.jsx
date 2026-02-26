@@ -75,6 +75,171 @@ const SCARLET_BOSS_TO_WING = {
   Scorn: "Cathedral",
   "Headless Horseman": "Event",
 };
+const DUNGEON_ZONE_BY_NAME = {
+  "Ragefire Chasm": "Orgrimmar",
+  "Wailing Caverns": "Northern Barrens",
+  "The Deadmines": "Westfall",
+  "Shadowfang Keep": "Silverpine Forest",
+  "Blackfathom Deeps": "Ashenvale",
+  "The Stockade": "Stormwind City",
+  Gnomeregan: "Dun Morogh",
+  "Razorfen Kraul": "Southern Barrens",
+  "Scarlet Monastery": "Tirisfal Glades",
+  "Razorfen Downs": "Southern Barrens",
+  Uldaman: "Badlands",
+  "Zul'Farrak": "Tanaris",
+  Maraudon: "Desolace",
+  "Temple of Atal'Hakkar": "Swamp of Sorrows",
+  "Blackrock Depths": "Blackrock Mountain",
+  "Lower Blackrock Spire": "Blackrock Mountain",
+  "Upper Blackrock Spire": "Blackrock Mountain",
+  "Dire Maul": "Feralas",
+  Scholomance: "Western Plaguelands",
+  Stratholme: "Eastern Plaguelands",
+  "Hellfire Ramparts": "Hellfire Peninsula",
+  "The Blood Furnace": "Hellfire Peninsula",
+  "The Shattered Halls": "Hellfire Peninsula",
+  "The Slave Pens": "Zangarmarsh",
+  "The Underbog": "Zangarmarsh",
+  "The Steamvault": "Zangarmarsh",
+  "Mana-Tombs": "Terokkar Forest",
+  "Auchenai Crypts": "Terokkar Forest",
+  "Sethekk Halls": "Terokkar Forest",
+  "Shadow Labyrinth": "Terokkar Forest",
+  "Old Hillsbrad Foothills": "Caverns of Time",
+  "The Black Morass": "Caverns of Time",
+  "The Mechanar": "Netherstorm",
+  "The Botanica": "Netherstorm",
+  "The Arcatraz": "Netherstorm",
+  "Magisters' Terrace": "Isle of Quel'Danas",
+};
+
+function getDungeonRegionLabel(location) {
+  if (location.startsWith("Outland")) return "Outland";
+  return "Azeroth";
+}
+
+function getDungeonDisplayLocation(dungeonName, location) {
+  const baseName = dungeonName.split(":")[0].trim();
+  const zone = DUNGEON_ZONE_BY_NAME[baseName] || "Unknown";
+  return `${getDungeonRegionLabel(location)} | ${zone}`;
+}
+const I18N = {
+  ru: {
+    openMenu: "Открыть меню",
+    closeMenu: "Закрыть меню",
+    menuTitle: "Меню",
+    tabRoute: "Маршрут",
+    tabDungeons: "Данжи",
+    sourcesTitle: "Источники маршрута",
+    zoneWidgetLabel: "Текущая зона и время",
+    questZone: "Зона квестов:",
+    routeNotSelected: "Маршрут не выбран",
+    dungeonsTitle: "Все данжи Classic + TBC",
+    levelGuide: "Рекомендуемый ориентир: уровень {level}",
+    levelGuideDetailed: "Текущий ориентир уровня: {level} (подсветка доступных)",
+    sortLabel: "Сортировка",
+    sortAsc: "По уровню: 1 → 70",
+    sortDesc: "По уровню: 70 → 1",
+    characterLevel: "Уровень персонажа",
+    clear: "Очистить",
+    allDungeonsShown: "Показаны все данжи",
+    dungeonsForLevel: "Показаны данжи для уровня {level}",
+    noDungeonsForLevel: "Для уровня {level} подходящих данжей не найдено.",
+    pickDungeon: "Выберите данж из списка слева.",
+    noDungeonsFound: "Для этого уровня данжи не найдены.",
+    levelsAndZone: "Уровни: {min}-{max} | {location}",
+    bossesListAria: "Список боссов данжа",
+    compactListAria: "Список данжей и уровней",
+    listAria: "Список данжей",
+    boardTitle: "Classic WOW TBC Fast Route 1-70",
+    faction: "Фракция",
+    race: "Расса",
+    startLevel: "Стартовый уровень",
+    class: "Класс",
+    anyFaction: "Любая",
+    alliance: "Альянс",
+    horde: "Орда",
+    currentLevel: "Текущий уровень:",
+    startLevelLabel: "Стартовый уровень:",
+    beginRoute: "Начать маршрут",
+    progress: "Прогресс маршрута: {value}%",
+    completed: "Выполнено: {done}/{total}",
+    recommendedQuestLevel: "Рекомендуемый уровень квестов: {level}",
+    changeStart: "Изменить стартовые параметры",
+    noNewQuests: "Для текущего шага пока нет новых квестов. Уровень маршрута обновится автоматически, когда откроется следующий этап.",
+    completeQuest: "Выполнить {title}",
+    levelMeta: "{zone} | Уровень: {level} | {chain}",
+    territory: "Территория: {label}",
+    territoryAlliance: "Alliance",
+    territoryHorde: "Horde",
+    territoryContested: "Contested",
+    territoryFriendly: "Своя",
+    territoryHostile: "Вражеская",
+    territoryNeutral: "Спорная",
+    clearDungeonLevel: "Очистить фильтр уровня данжей",
+  },
+  en: {
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
+    menuTitle: "Menu",
+    tabRoute: "Route",
+    tabDungeons: "Dungeons",
+    sourcesTitle: "Route Sources",
+    zoneWidgetLabel: "Current zone and time",
+    questZone: "Quest zone:",
+    routeNotSelected: "No route selected",
+    dungeonsTitle: "All Classic + TBC Dungeons",
+    levelGuide: "Recommended guide: level {level}",
+    levelGuideDetailed: "Current level guide: {level} (available highlight)",
+    sortLabel: "Sort",
+    sortAsc: "By level: 1 → 70",
+    sortDesc: "By level: 70 → 1",
+    characterLevel: "Character level",
+    clear: "Clear",
+    allDungeonsShown: "Showing all dungeons",
+    dungeonsForLevel: "Showing dungeons for level {level}",
+    noDungeonsForLevel: "No matching dungeons for level {level}.",
+    pickDungeon: "Select a dungeon from the left list.",
+    noDungeonsFound: "No dungeons found for this level.",
+    levelsAndZone: "Levels: {min}-{max} | {location}",
+    bossesListAria: "Dungeon bosses list",
+    compactListAria: "Dungeon and level list",
+    listAria: "Dungeon list",
+    boardTitle: "Classic WOW TBC Fast Route 1-70",
+    faction: "Faction",
+    race: "Race",
+    startLevel: "Start level",
+    class: "Class",
+    anyFaction: "Any",
+    alliance: "Alliance",
+    horde: "Horde",
+    currentLevel: "Current level:",
+    startLevelLabel: "Start level:",
+    beginRoute: "Start route",
+    progress: "Route progress: {value}%",
+    completed: "Completed: {done}/{total}",
+    recommendedQuestLevel: "Recommended quest level: {level}",
+    changeStart: "Change starting setup",
+    noNewQuests: "No new quests for the current step yet. Route level will update automatically when the next stage unlocks.",
+    completeQuest: "Complete {title}",
+    levelMeta: "{zone} | Level: {level} | {chain}",
+    territory: "Territory: {label}",
+    territoryAlliance: "Alliance",
+    territoryHorde: "Horde",
+    territoryContested: "Contested",
+    territoryFriendly: "Friendly",
+    territoryHostile: "Hostile",
+    territoryNeutral: "Contested",
+    clearDungeonLevel: "Clear dungeon level filter",
+  },
+};
+
+function tr(locale, key, vars = {}) {
+  const dict = I18N[locale] || I18N.ru;
+  const template = dict[key] || I18N.ru[key] || key;
+  return template.replace(/\{(\w+)\}/g, (_, name) => String(vars[name] ?? ""));
+}
 
 function splitScarletMonasteryDungeon(dungeon) {
   if (dungeon.name !== SCARLET_MONASTERY) return [dungeon];
@@ -180,12 +345,12 @@ const territoryIconByFaction = {
 
 function getTerritoryStatus(playerFaction, territoryFaction) {
   if (playerFaction === "Both" || territoryFaction === "Both") {
-    return { kind: "neutral", icon: "●", label: "Спорная" };
+    return { kind: "neutral", icon: "●" };
   }
   if (playerFaction === territoryFaction) {
-    return { kind: "friendly", icon: "⚑", label: "Своя" };
+    return { kind: "friendly", icon: "⚑" };
   }
-  return { kind: "hostile", icon: "⚔", label: "Вражеская" };
+  return { kind: "hostile", icon: "⚔" };
 }
 
 function loadPersistedState() {
@@ -280,6 +445,14 @@ export default function App() {
   const persisted = useMemo(() => loadPersistedState(), []);
   const [now, setNow] = useState(() => new Date());
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeView, setActiveView] = useState("route");
+  const [dungeonSort, setDungeonSort] = useState("level-asc");
+  const [dungeonFilterLevelInput, setDungeonFilterLevelInput] = useState("");
+  const [language, setLanguage] = useState(
+    persisted?.language && ["ru", "en"].includes(persisted.language)
+      ? persisted.language
+      : "ru",
+  );
 
   const [isConfigured, setIsConfigured] = useState(
     Boolean(persisted?.isConfigured),
@@ -349,13 +522,14 @@ export default function App() {
 
   const normalizedStartLevel = clampLevel(startLevel);
   const normalizedCurrentLevel = clampLevel(currentLevel);
+  const t = (key, vars) => tr(language, key, vars);
   const userClock = useMemo(
     () =>
-      new Intl.DateTimeFormat("ru-RU", {
+      new Intl.DateTimeFormat(language === "en" ? "en-US" : "ru-RU", {
         hour: "2-digit",
         minute: "2-digit",
       }).format(now),
-    [now],
+    [now, language],
   );
   const allowedRacesForFaction = useMemo(() => {
     return raceList.filter((raceName) => {
@@ -372,15 +546,35 @@ export default function App() {
     ? normalizedCurrentLevel
     : normalizedStartLevel;
   const dungeonListForLevel = useMemo(() => {
-    return [...dungeons]
+    const list = [...dungeons]
       .filter((dungeon) => CLASSIC_TBC_DUNGEON_NAMES.has(dungeon.name))
       .flatMap((dungeon) => splitScarletMonasteryDungeon(dungeon))
-      .sort((a, b) => a.levelMin - b.levelMin);
-  }, []);
+      .sort((a, b) => {
+        if (dungeonSort === "level-desc") {
+          return b.levelMin - a.levelMin || b.levelMax - a.levelMax || a.name.localeCompare(b.name);
+        }
+        return a.levelMin - b.levelMin || a.levelMax - b.levelMax || a.name.localeCompare(b.name);
+      });
+    return list;
+  }, [dungeonSort]);
+  const hasDungeonLevelFilter = dungeonFilterLevelInput.trim() !== "";
+  const dungeonFilterLevel = hasDungeonLevelFilter
+    ? clampLevel(dungeonFilterLevelInput)
+    : null;
+  const filteredDungeonList = useMemo(() => {
+    if (activeView !== "dungeons") return dungeonListForLevel;
+    if (!hasDungeonLevelFilter || dungeonFilterLevel == null) return dungeonListForLevel;
+    return dungeonListForLevel.filter(
+      (dungeon) =>
+        dungeonFilterLevel >= dungeon.levelMin && dungeonFilterLevel <= dungeon.levelMax,
+    );
+  }, [activeView, dungeonListForLevel, dungeonFilterLevel, hasDungeonLevelFilter]);
+  const visibleDungeonList =
+    activeView === "dungeons" ? filteredDungeonList : dungeonListForLevel;
   const selectedDungeon = useMemo(() => {
-    if (!selectedDungeonId) return dungeonListForLevel[0] || null;
-    return dungeonListForLevel.find((dungeon) => dungeon.id === selectedDungeonId) || null;
-  }, [dungeonListForLevel, selectedDungeonId]);
+    if (!selectedDungeonId) return visibleDungeonList[0] || null;
+    return visibleDungeonList.find((dungeon) => dungeon.id === selectedDungeonId) || null;
+  }, [visibleDungeonList, selectedDungeonId]);
   const selectedBoss = useMemo(() => {
     if (!selectedDungeon || !selectedDungeon.bosses.length) return null;
     if (!selectedBossId) return selectedDungeon.bosses[0] || null;
@@ -473,10 +667,10 @@ export default function App() {
   }, [unlockedQuests, recommendedLevel]);
   const currentQuestZone = useMemo(() => {
     if (visibleQuests.length > 0) return visibleQuests[0].zone;
-    return "Маршрут не выбран";
+    return null;
   }, [visibleQuests]);
   const zoneImageUrl = useMemo(() => {
-    if (currentQuestZone === "Маршрут не выбран") return DEFAULT_ZONE_IMAGE;
+    if (!currentQuestZone) return DEFAULT_ZONE_IMAGE;
     return zoneImageByRoute[currentQuestZone] || DEFAULT_ZONE_IMAGE;
   }, [currentQuestZone]);
 
@@ -527,6 +721,7 @@ export default function App() {
       startLevel: normalizedStartLevel,
       currentLevel: normalizedCurrentLevel,
       completedIds: Array.from(completedIds),
+      language,
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
   }, [
@@ -537,6 +732,7 @@ export default function App() {
     normalizedStartLevel,
     normalizedCurrentLevel,
     completedIds,
+    language,
   ]);
 
   useEffect(() => {
@@ -561,14 +757,14 @@ export default function App() {
     setRace("Any");
   }, [allowedRacesForFaction, race]);
   useEffect(() => {
-    if (dungeonListForLevel.length === 0) {
+    if (visibleDungeonList.length === 0) {
       setSelectedDungeonId(null);
       return;
     }
-    if (!selectedDungeonId || !dungeonListForLevel.some((d) => d.id === selectedDungeonId)) {
-      setSelectedDungeonId(dungeonListForLevel[0].id);
+    if (!selectedDungeonId || !visibleDungeonList.some((d) => d.id === selectedDungeonId)) {
+      setSelectedDungeonId(visibleDungeonList[0].id);
     }
-  }, [dungeonListForLevel, selectedDungeonId]);
+  }, [visibleDungeonList, selectedDungeonId]);
   useEffect(() => {
     if (!selectedDungeon || selectedDungeon.bosses.length === 0) {
       setSelectedBossId(null);
@@ -600,12 +796,12 @@ export default function App() {
   const closeLootTooltip = () => setTooltipData(null);
 
   return (
-    <main className="page">
+    <main className={`page ${language === "ru" ? "page--lang-ru" : "page--lang-en"}`}>
       <button
         className="burger-btn"
         type="button"
         onClick={() => setIsMenuOpen((prev) => !prev)}
-        aria-label="Открыть меню источников"
+        aria-label={t("openMenu")}
         aria-expanded={isMenuOpen}
       >
         <span />
@@ -617,27 +813,52 @@ export default function App() {
         <button
           className="menu-overlay"
           type="button"
-          aria-label="Закрыть меню"
+          aria-label={t("closeMenu")}
           onClick={() => setIsMenuOpen(false)}
         />
       )}
 
       <aside className={`side-menu ${isMenuOpen ? "side-menu--open" : ""}`}>
-        <h2>Источники маршрута</h2>
-        <ul>
-          {sourceLinks.map((item) => (
-            <li key={item.url}>
-              <a href={item.url} target="_blank">
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <h2>{t("menuTitle")}</h2>
+        <div className="side-menu__nav">
+          <button
+            type="button"
+            className={`side-menu__tab ${activeView === "route" ? "side-menu__tab--active" : ""}`}
+            onClick={() => {
+              setActiveView("route");
+              setIsMenuOpen(false);
+            }}
+          >
+            {t("tabRoute")}
+          </button>
+          <button
+            type="button"
+            className={`side-menu__tab ${activeView === "dungeons" ? "side-menu__tab--active" : ""}`}
+            onClick={() => {
+              setActiveView("dungeons");
+              setIsMenuOpen(false);
+            }}
+          >
+            {t("tabDungeons")}
+          </button>
+        </div>
+        <div className="side-menu__sources">
+          <h3>{t("sourcesTitle")}</h3>
+          <ul>
+            {sourceLinks.map((item) => (
+              <li key={item.url}>
+                <a href={item.url} target="_blank">
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </aside>
 
       <aside
         className="zone-widget zone-widget--floating"
-        aria-label="Текущая зона и время"
+        aria-label={t("zoneWidgetLabel")}
       >
         <div className="minimap-shell">
           <div className="minimap-frame">
@@ -654,134 +875,232 @@ export default function App() {
           </div>
         </div>
         <div className="zone-widget__meta">
-          <strong>Зона квестов:</strong> {currentQuestZone}
+          <strong>{t("questZone")}</strong> {currentQuestZone || t("routeNotSelected")}
         </div>
       </aside>
 
-      <section className="dungeon-panel" aria-label="Список данжей и лут">
-        <div className="dungeon-panel__header">
-          <h2>Все данжи Classic + TBC</h2>
-          <span>Текущий ориентир уровня: {levelForDungeons} (подсветка доступных)</span>
-        </div>
+      <button
+        className="lang-btn"
+        type="button"
+        onClick={() => setLanguage((prev) => (prev === "ru" ? "en" : "ru"))}
+        aria-label="Switch language"
+      >
+        {language === "ru" ? "EN" : "RU"}
+      </button>
 
-        <div className="dungeon-panel__layout">
-          <ul className="dungeon-list" role="listbox" aria-label="Список данжей">
+      {activeView === "route" ? (
+        <section className="dungeon-panel dungeon-panel--compact" aria-label={t("listAria")}>
+          <div className="dungeon-panel__header">
+            <h2>{t("dungeonsTitle")}</h2>
+            <span>{t("levelGuide", { level: levelForDungeons })}</span>
+          </div>
+          <div className="dungeon-sort">
+            <label>
+              {t("sortLabel")}
+              <select value={dungeonSort} onChange={(e) => setDungeonSort(e.target.value)}>
+                <option value="level-asc">{t("sortAsc")}</option>
+                <option value="level-desc">{t("sortDesc")}</option>
+              </select>
+            </label>
+          </div>
+          <ul className="dungeon-list dungeon-list--compact" role="list" aria-label={t("compactListAria")}>
             {dungeonListForLevel.map((dungeon) => (
               <li key={dungeon.id}>
                 <button
                   type="button"
-                  className={`dungeon-row ${selectedDungeon?.id === dungeon.id ? "dungeon-row--active" : ""} ${levelForDungeons >= dungeon.levelMin && levelForDungeons <= dungeon.levelMax ? "dungeon-row--recommended" : ""}`}
+                  className={`dungeon-row ${levelForDungeons >= dungeon.levelMin && levelForDungeons <= dungeon.levelMax ? "dungeon-row--recommended" : ""}`}
                   onClick={() => setSelectedDungeonId(dungeon.id)}
                 >
                   <span className="dungeon-row__name">{dungeon.name}</span>
                   <span className="dungeon-row__meta">
-                    {dungeon.levelMin}-{dungeon.levelMax} | {dungeon.location}
+                    {dungeon.levelMin}-{dungeon.levelMax} | {getDungeonDisplayLocation(dungeon.name, dungeon.location)}
                   </span>
                 </button>
               </li>
             ))}
           </ul>
-
-          <div className="dungeon-loot">
-            {!selectedDungeon ? (
-              <p className="empty-state">Для этого уровня данжи не найдены.</p>
-            ) : (
-              <>
-                <h3>{selectedDungeon.name}</h3>
-                <p className="dungeon-loot__sub">
-                  Уровни: {selectedDungeon.levelMin}-{selectedDungeon.levelMax} | {selectedDungeon.location}
-                </p>
-                <ul className="boss-list" role="tablist" aria-label="Список боссов данжа">
-                  {selectedDungeon.bosses.map((boss) => (
-                    <li key={boss.id}>
-                      <button
-                        type="button"
-                        className={`boss-chip ${selectedBoss?.id === boss.id ? "boss-chip--active" : ""}`}
-                        onClick={() => setSelectedBossId(boss.id)}
-                      >
-                        {boss.name}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-
-                <ul className="loot-list">
-                  {(selectedBoss?.loot || []).map((item) => (
-                    <li key={`${selectedDungeon.id}-${item.id}`} className="loot-item">
-                      <button
-                        type="button"
-                        className="loot-icon-btn"
-                        onMouseEnter={(event) => openLootTooltip(item, event)}
-                        onMouseMove={moveLootTooltip}
-                        onMouseLeave={closeLootTooltip}
-                        onFocus={(event) => {
-                          const rect = event.currentTarget.getBoundingClientRect();
-                          openLootTooltip(item, {
-                            clientX: rect.left + rect.width / 2,
-                            clientY: rect.top + rect.height / 2,
-                          });
-                        }}
-                        onBlur={closeLootTooltip}
-                      >
-                        <img
-                          src={item.icon}
-                          alt={item.name}
-                          loading="lazy"
-                          onError={(event) => {
-                            event.currentTarget.src = "https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg";
-                          }}
-                        />
-                        <span className={`loot-rarity loot-rarity--${item.rarity.toLowerCase()}`}>{item.name}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-                {tooltipData &&
-                  createPortal(
-                    <div
-                      ref={tooltipRef}
-                      className={`loot-tooltip-float ${tooltipPosition.below ? "loot-tooltip-float--below" : ""}`}
-                      role="tooltip"
-                      style={{
-                        left: `${tooltipPosition.left}px`,
-                        top: `${tooltipPosition.top}px`,
-                      }}
-                    >
-                    <strong className={`loot-tooltip__name loot-tooltip__name--${tooltipData.item.rarity.toLowerCase()}`}>
-                      {tooltipData.item.name}
-                    </strong>
-                    {buildTooltipRows(tooltipData.item).map((row, idx) => (
-                      <div
-                        key={`${tooltipData.item.id}-${idx}`}
-                        className={`loot-tooltip__row ${row.format ? `loot-tooltip__row--${row.format}` : ""}`}
-                      >
-                        <span
-                          className={`loot-tooltip__line ${row.format ? `loot-tooltip__line--${row.format}` : ""} ${getTooltipToneClass(row.left, row.format)}`}
-                        >
-                          {row.left}
-                        </span>
-                        {row.right && (
-                          <span
-                            className={`loot-tooltip__line loot-tooltip__line--right ${getTooltipToneClass(row.right, row.format)}`}
-                          >
-                            {row.right}
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>,
-                  document.body,
-                )}
-              </>
-            )}
+        </section>
+      ) : (
+        <section className="dungeon-panel dungeon-panel--detailed" aria-label={t("listAria")}>
+          <div className="dungeon-panel__header">
+            <h2>{t("dungeonsTitle")}</h2>
+            <span>{t("levelGuideDetailed", { level: levelForDungeons })}</span>
           </div>
-        </div>
-      </section>
+          <div className="dungeon-sort">
+            <label>
+              {t("sortLabel")}
+              <select value={dungeonSort} onChange={(e) => setDungeonSort(e.target.value)}>
+                <option value="level-asc">{t("sortAsc")}</option>
+                <option value="level-desc">{t("sortDesc")}</option>
+              </select>
+            </label>
+            <label>
+              {t("characterLevel")}
+              <input
+                type="number"
+                min={1}
+                max={70}
+                value={dungeonFilterLevelInput}
+                placeholder={String(levelForDungeons)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === "") {
+                    setDungeonFilterLevelInput("");
+                  } else {
+                    setDungeonFilterLevelInput(String(clampLevel(value)));
+                  }
+                }}
+              />
+            </label>
+            {hasDungeonLevelFilter && (
+              <button
+                type="button"
+                className="dungeon-sort__clear"
+                onClick={() => setDungeonFilterLevelInput("")}
+                aria-label={t("clearDungeonLevel")}
+                title={t("clear")}
+              >
+                ×
+              </button>
+            )}
+            <span className="dungeon-sort__hint">
+              {hasDungeonLevelFilter && dungeonFilterLevel != null
+                ? t("dungeonsForLevel", { level: dungeonFilterLevel })
+                : t("allDungeonsShown")}
+            </span>
+          </div>
 
-      <section className="board">
+          <div className="dungeon-panel__layout">
+            <ul className="dungeon-list" role="listbox" aria-label={t("listAria")}>
+              {visibleDungeonList.map((dungeon) => (
+                <li key={dungeon.id}>
+                  <button
+                    type="button"
+                    className={`dungeon-row ${selectedDungeon?.id === dungeon.id ? "dungeon-row--active" : ""} ${(hasDungeonLevelFilter && dungeonFilterLevel != null)
+                      ? dungeonFilterLevel >= dungeon.levelMin && dungeonFilterLevel <= dungeon.levelMax
+                        ? "dungeon-row--recommended"
+                        : ""
+                      : "dungeon-row--recommended"}`}
+                    onClick={() => setSelectedDungeonId(dungeon.id)}
+                  >
+                    <span className="dungeon-row__name">{dungeon.name}</span>
+                    <span className="dungeon-row__meta">
+                      {dungeon.levelMin}-{dungeon.levelMax} | {getDungeonDisplayLocation(dungeon.name, dungeon.location)}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <div className="dungeon-loot">
+              {visibleDungeonList.length === 0 ? (
+                <p className="empty-state">
+                  {t("noDungeonsForLevel", { level: dungeonFilterLevel ?? levelForDungeons })}
+                </p>
+              ) : !selectedDungeon ? (
+                <p className="empty-state">{t("pickDungeon")}</p>
+              ) : (
+                <>
+                  <h3>{selectedDungeon.name}</h3>
+                  <p className="dungeon-loot__sub">
+                    {t("levelsAndZone", {
+                      min: selectedDungeon.levelMin,
+                      max: selectedDungeon.levelMax,
+                      location: getDungeonDisplayLocation(selectedDungeon.name, selectedDungeon.location),
+                    })}
+                  </p>
+                  <ul className="boss-list" role="tablist" aria-label={t("bossesListAria")}>
+                    {selectedDungeon.bosses.map((boss) => (
+                      <li key={boss.id}>
+                        <button
+                          type="button"
+                          className={`boss-chip ${selectedBoss?.id === boss.id ? "boss-chip--active" : ""}`}
+                          onClick={() => setSelectedBossId(boss.id)}
+                        >
+                          {boss.name}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <ul className="loot-list">
+                    {(selectedBoss?.loot || []).map((item) => (
+                      <li key={`${selectedDungeon.id}-${item.id}`} className="loot-item">
+                        <button
+                          type="button"
+                          className="loot-icon-btn"
+                          onMouseEnter={(event) => openLootTooltip(item, event)}
+                          onMouseMove={moveLootTooltip}
+                          onMouseLeave={closeLootTooltip}
+                          onFocus={(event) => {
+                            const rect = event.currentTarget.getBoundingClientRect();
+                            openLootTooltip(item, {
+                              clientX: rect.left + rect.width / 2,
+                              clientY: rect.top + rect.height / 2,
+                            });
+                          }}
+                          onBlur={closeLootTooltip}
+                        >
+                          <img
+                            src={item.icon}
+                            alt={item.name}
+                            loading="lazy"
+                            onError={(event) => {
+                              event.currentTarget.src = "https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg";
+                            }}
+                          />
+                          <span className={`loot-rarity loot-rarity--${item.rarity.toLowerCase()}`}>{item.name}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  {tooltipData &&
+                    createPortal(
+                      <div
+                        ref={tooltipRef}
+                        className={`loot-tooltip-float ${tooltipPosition.below ? "loot-tooltip-float--below" : ""}`}
+                        role="tooltip"
+                        style={{
+                          left: `${tooltipPosition.left}px`,
+                          top: `${tooltipPosition.top}px`,
+                        }}
+                      >
+                        <strong className={`loot-tooltip__name loot-tooltip__name--${tooltipData.item.rarity.toLowerCase()}`}>
+                          {tooltipData.item.name}
+                        </strong>
+                        {buildTooltipRows(tooltipData.item).map((row, idx) => (
+                          <div
+                            key={`${tooltipData.item.id}-${idx}`}
+                            className={`loot-tooltip__row ${row.format ? `loot-tooltip__row--${row.format}` : ""}`}
+                          >
+                            <span
+                              className={`loot-tooltip__line ${row.format ? `loot-tooltip__line--${row.format}` : ""} ${getTooltipToneClass(row.left, row.format)}`}
+                            >
+                              {row.left}
+                            </span>
+                            {row.right && (
+                              <span
+                                className={`loot-tooltip__line loot-tooltip__line--right ${getTooltipToneClass(row.right, row.format)}`}
+                              >
+                                {row.right}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>,
+                      document.body,
+                    )}
+                </>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {activeView === "route" && <section className="board">
         <header className="board__header">
           <div className="board__header-main">
-            <h1>Classic WOW TBC Fast Route 1-70</h1>
+            <h1>{t("boardTitle")}</h1>
           </div>
         </header>
 
@@ -789,19 +1108,19 @@ export default function App() {
           <>
             <div className="filters">
               <label>
-                Фракция
+                {t("faction")}
                 <select
                   value={faction}
                   onChange={(event) => setFaction(event.target.value)}
                 >
-                  <option value="Both">Любая</option>
-                  <option value="Alliance">Alliance</option>
-                  <option value="Horde">Horde</option>
+                  <option value="Both">{t("anyFaction")}</option>
+                  <option value="Alliance">{t("alliance")}</option>
+                  <option value="Horde">{t("horde")}</option>
                 </select>
               </label>
 
               <label>
-                Расса
+                {t("race")}
                 <select value={race} onChange={(e) => setRace(e.target.value)}>
                   {allowedRacesForFaction.map((r) => (
                     <option key={r} value={r}>
@@ -812,7 +1131,7 @@ export default function App() {
               </label>
 
               <label>
-                Стартовый уровень
+                {t("startLevel")}
                 <input
                   type="number"
                   min={1}
@@ -830,7 +1149,7 @@ export default function App() {
               </label>
 
               <label>
-                Класс
+                {t("class")}
                 <select
                   value={playerClass}
                   onChange={(event) => setPlayerClass(event.target.value)}
@@ -845,42 +1164,41 @@ export default function App() {
             </div>
 
             <div className="spawn-info">
-              <strong>Стартовый уровень:</strong> {normalizedStartLevel}
+              <strong>{t("startLevelLabel")}</strong> {normalizedStartLevel}
             </div>
 
             <div className="actions">
               <button className="action-btn" onClick={startRoute}>
-                Начать маршрут
+                {t("beginRoute")}
               </button>
             </div>
           </>
         ) : (
           <>
             <div className="spawn-info">
-              <strong>Текущий уровень:</strong> {normalizedCurrentLevel}
+              <strong>{t("currentLevel")}</strong> {normalizedCurrentLevel}
             </div>
 
             <div className="progress">
-              <span>Прогресс маршрута: {progress}%</span>
+              <span>{t("progress", { value: progress })}</span>
               <div>
-                Выполнено: {doneInRoute}/{trackableIds.length}
+                {t("completed", { done: doneInRoute, total: trackableIds.length })}
               </div>
               {recommendedLevel != null && (
-                <div>Рекомендуемый уровень квестов: {recommendedLevel}</div>
+                <div>{t("recommendedQuestLevel", { level: recommendedLevel })}</div>
               )}
             </div>
 
             <div className="actions">
               <button className="action-btn action-btn--ghost" onClick={resetRoute}>
-                Изменить стартовые параметры
+                {t("changeStart")}
               </button>
             </div>
 
             <div className="quest-stage">
               {visibleQuests.length === 0 ? (
                 <p className="empty-state">
-                  Для текущего шага пока нет новых квестов. Уровень маршрута
-                  обновится автоматически, когда откроется следующий этап.
+                  {t("noNewQuests")}
                 </p>
               ) : (
                 <ul className="quest-list" aria-live="polite">
@@ -893,10 +1211,10 @@ export default function App() {
                     );
                     const territoryLabel =
                       territoryFaction === "Alliance"
-                        ? "Alliance"
+                        ? t("territoryAlliance")
                         : territoryFaction === "Horde"
-                          ? "Horde"
-                          : "Contested";
+                          ? t("territoryHorde")
+                          : t("territoryContested");
                     const territoryCrest = territoryIconByFaction[territoryFaction] || null;
 
                     return (
@@ -907,7 +1225,7 @@ export default function App() {
                         <button
                           className="check"
                           onClick={() => completeQuest(quest.id)}
-                          aria-label={`Выполнить ${quest.title}`}
+                          aria-label={t("completeQuest", { title: quest.title })}
                           disabled={isDone}
                         >
                           {isDone ? "✓" : ""}
@@ -916,16 +1234,26 @@ export default function App() {
                         <div className="quest-content">
                           <p className="quest-title">{quest.title}</p>
                           <p className="quest-meta">
-                            {quest.zone} | Уровень: {quest.level} | {quest.chain}
+                            {t("levelMeta", {
+                              zone: quest.zone,
+                              level: quest.level,
+                              chain: quest.chain,
+                            })}
                           </p>
                           <p className="quest-territory">
                             <span
                               className={`territory-badge territory-badge--${territoryStatus.kind}`}
-                              aria-label={territoryStatus.label}
+                              aria-label={
+                                territoryStatus.kind === "friendly"
+                                  ? t("territoryFriendly")
+                                  : territoryStatus.kind === "hostile"
+                                    ? t("territoryHostile")
+                                    : t("territoryNeutral")
+                              }
                             >
                               {territoryStatus.icon}
                             </span>
-                            Территория: {territoryLabel}
+                            {t("territory", { label: territoryLabel })}
                             {territoryCrest && (
                               <span className="territory-crest-box">
                                 <img
@@ -946,7 +1274,7 @@ export default function App() {
           </>
         )}
 
-      </section>
+      </section>}
 
       <footer className="site-footer">
         <a
