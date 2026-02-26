@@ -1,74 +1,75 @@
 # Classic WOW TBC Fast Route 1-70
 
-Веб-приложение для планирования прокачки персонажа в **WoW Classic + TBC** с учетом:
-- стартового уровня,
-- фракции, расы и класса,
-- последовательности цепочки квестов,
-- контроля территорий (Alliance / Horde / Contested),
-- визуальной миникарты зоны и прогресса маршрута.
+A web app for planning character leveling in **WoW Classic + TBC**, with support for:
+- starting level,
+- faction, race, and class,
+- quest chain progression,
+- territory control state (Alliance / Horde / Contested),
+- zone minimap visuals and route progress tracking.
 
-## О чем этот сайт
+## What This Site Does
 
-Сайт помогает быстро понять, **какие квесты делать сейчас**, чтобы идти по маршруту 1-70 без хаотичных скачков по локациям.  
-После стартовой настройки пользователь отмечает квесты как выполненные, а приложение автоматически подбирает следующий шаг.
+This site helps players quickly understand **which quests to do right now** to follow a clean 1-70 route without chaotic zone jumping.  
+After initial setup, users simply mark quests as completed and the app automatically suggests the next step.
 
-## Ключевые возможности
+## Key Features
 
-- Стартовая конфигурация: фракция, раса, класс, стартовый уровень.
-- Валидация раса-класс и фракция-раса (некорректные комбинации недоступны).
-- Автопрогрессия маршрута после выполнения квестов.
-- Анимация выполнения квеста: зачеркивание -> растворение -> исчезновение.
-- Локальные изображения локаций в миникарте (`public/zone-images`).
-- Сайд-меню с источниками маршрута.
-- Сохранение состояния в `localStorage` (данные сохраняются между перезаходами).
+- Start configuration: faction, race, class, starting level.
+- Race-class and faction-race validation (invalid combinations are blocked).
+- Automatic route progression after quest completion.
+- Quest completion animation: strike-through -> fade -> remove.
+- Local zone images for the minimap (`public/zone-images`).
+- Side burger menu for route sources.
+- Persistent state in `localStorage` (session survives page reload/reopen).
 
-## Технологии
+## Tech Stack
 
 - React 18
 - Vite 5
-- CSS (кастомный UI без UI-библиотек)
+- CSS (custom UI, no component framework)
 
-## Запуск локально
+## Run Locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-Сборка production:
+Production build:
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## Структура проекта
+## Project Structure
 
 ```text
 src/
-  App.jsx          # основной UI и логика маршрута
-  quests.js        # данные маршрута, зоны, источники
-  styles.css       # стили интерфейса
+  App.jsx          # main UI and route logic
+  quests.js        # route data, zones, source links
+  styles.css       # application styles
 
 public/
-  zone-images/     # локальные изображения зон
-  faction-icons/   # иконки фракций
+  zone-images/     # local zone images for minimap
+  faction-icons/   # faction crest icons
 
 scripts/
-  download-zone-images.mjs  # утилита загрузки изображений зон
+  download-zone-images.mjs  # utility to refresh local zone images
 ```
 
-## Полезные скрипты
+## Useful Scripts
 
-- `npm run dev` — запуск в режиме разработки
-- `npm run build` — production-сборка
-- `npm run preview` — локальный просмотр production-сборки
-- `npm run download:zone-images` — обновление локальных изображений зон
+- `npm run dev` — run development server
+- `npm run build` — create production build
+- `npm run preview` — preview production build locally
+- `npm run download:zone-images` — refresh local zone images
 
-## Развертывание на GitHub
+## GitHub Deployment
 
-Репозиторий уже готов к публикации. Для GitHub Pages можно использовать сборку из `dist/` через любой удобный workflow или хостинг Vite-приложений.
+The repository is ready to publish.  
+For GitHub Pages, deploy from the `dist/` output using any preferred workflow for Vite apps.
 
-## Лицензия
+## License
 
-Проект создан как пользовательский инструмент для маршрутизации прокачки в WoW.
+This project is built as a player tool for WoW leveling route planning.
