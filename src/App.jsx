@@ -27,32 +27,33 @@ const STORAGE_KEY = "tbc-route-state-v1";
 const DEFAULT_ZONE_IMAGE = `data:image/svg+xml,${encodeURIComponent(
   "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='#201812'/><stop offset='100%' stop-color='#322516'/></linearGradient></defs><rect width='300' height='300' fill='url(#g)'/><circle cx='150' cy='150' r='130' fill='none' stroke='#80622d' stroke-width='8'/><text x='150' y='146' font-size='22' fill='#e8cf9f' text-anchor='middle' font-family='serif'>WoW Zone</text><text x='150' y='176' font-size='16' fill='#cbb48a' text-anchor='middle' font-family='serif'>Loading Screen</text></svg>",
 )}`;
+const assetUrl = (relativePath) => `${import.meta.env.BASE_URL}${relativePath}`;
 
 const zoneImageByRoute = {
-  "Elwynn / Dun Morogh / Teldrassil / Azuremyst": "/zone-images/elwynn-forest.jpg",
-  "Westfall / Loch Modan / Darkshore": "/zone-images/westfall.jpg",
-  "Redridge Mountains / Duskwood": "/zone-images/redridge-mountains.jpg",
-  "Durotar / Mulgore / Tirisfal / Eversong": "/zone-images/durotar.jpg",
-  "The Barrens / Silverpine / Ghostlands": "/zone-images/the-barrens.jpg",
-  "Stonetalon Mountains / Hillsbrad Foothills": "/zone-images/stonetalon-mountains.jpg",
-  "Ashenvale / Stonetalon Mountains": "/zone-images/ashenvale.jpg",
-  "Thousand Needles / Hillsbrad Foothills": "/zone-images/thousand-needles.jpg",
-  "Stranglethorn Vale / Arathi Highlands": "/zone-images/stranglethorn-vale.jpg",
-  "Desolace / Dustwallow Marsh": "/zone-images/desolace.jpg",
-  "Badlands / Swamp of Sorrows": "/zone-images/badlands.jpg",
-  "Tanaris / Feralas": "/zone-images/tanaris.jpg",
-  "The Hinterlands / Searing Gorge": "/zone-images/the-hinterlands.jpg",
-  "Un'Goro Crater / Felwood": "/zone-images/ungoro-crater.jpg",
-  "Western/Eastern Plaguelands / Burning Steppes": "/zone-images/western-plaguelands.jpg",
-  "Blasted Lands": "/zone-images/blasted-lands.jpg",
-  "Hellfire Peninsula": "/zone-images/hellfire-peninsula.jpg",
-  "Zangarmarsh": "/zone-images/zangarmarsh.jpg",
-  "Terokkar Forest": "/zone-images/terokkar-forest.jpg",
-  "Nagrand": "/zone-images/nagrand.jpg",
-  "Blade's Edge Mountains": "/zone-images/blades-edge-mountains.jpg",
-  "Netherstorm": "/zone-images/netherstorm.jpg",
-  "Shadowmoon Valley": "/zone-images/shadowmoon-valley.jpg",
-  "Netherstorm / Shadowmoon Valley": "/zone-images/shadowmoon-valley.jpg",
+  "Elwynn / Dun Morogh / Teldrassil / Azuremyst": assetUrl("zone-images/elwynn-forest.jpg"),
+  "Westfall / Loch Modan / Darkshore": assetUrl("zone-images/westfall.jpg"),
+  "Redridge Mountains / Duskwood": assetUrl("zone-images/redridge-mountains.jpg"),
+  "Durotar / Mulgore / Tirisfal / Eversong": assetUrl("zone-images/durotar.jpg"),
+  "The Barrens / Silverpine / Ghostlands": assetUrl("zone-images/the-barrens.jpg"),
+  "Stonetalon Mountains / Hillsbrad Foothills": assetUrl("zone-images/stonetalon-mountains.jpg"),
+  "Ashenvale / Stonetalon Mountains": assetUrl("zone-images/ashenvale.jpg"),
+  "Thousand Needles / Hillsbrad Foothills": assetUrl("zone-images/thousand-needles.jpg"),
+  "Stranglethorn Vale / Arathi Highlands": assetUrl("zone-images/stranglethorn-vale.jpg"),
+  "Desolace / Dustwallow Marsh": assetUrl("zone-images/desolace.jpg"),
+  "Badlands / Swamp of Sorrows": assetUrl("zone-images/badlands.jpg"),
+  "Tanaris / Feralas": assetUrl("zone-images/tanaris.jpg"),
+  "The Hinterlands / Searing Gorge": assetUrl("zone-images/the-hinterlands.jpg"),
+  "Un'Goro Crater / Felwood": assetUrl("zone-images/ungoro-crater.jpg"),
+  "Western/Eastern Plaguelands / Burning Steppes": assetUrl("zone-images/western-plaguelands.jpg"),
+  "Blasted Lands": assetUrl("zone-images/blasted-lands.jpg"),
+  "Hellfire Peninsula": assetUrl("zone-images/hellfire-peninsula.jpg"),
+  "Zangarmarsh": assetUrl("zone-images/zangarmarsh.jpg"),
+  "Terokkar Forest": assetUrl("zone-images/terokkar-forest.jpg"),
+  "Nagrand": assetUrl("zone-images/nagrand.jpg"),
+  "Blade's Edge Mountains": assetUrl("zone-images/blades-edge-mountains.jpg"),
+  "Netherstorm": assetUrl("zone-images/netherstorm.jpg"),
+  "Shadowmoon Valley": assetUrl("zone-images/shadowmoon-valley.jpg"),
+  "Netherstorm / Shadowmoon Valley": assetUrl("zone-images/shadowmoon-valley.jpg"),
 };
 
 const zoneTerritoryByRoute = {
@@ -82,8 +83,8 @@ const zoneTerritoryByRoute = {
   "Netherstorm / Shadowmoon Valley": "Both",
 };
 const territoryIconByFaction = {
-  Alliance: "/faction-icons/alliance-crest.png",
-  Horde: "/faction-icons/horde-crest.png",
+  Alliance: assetUrl("faction-icons/alliance-crest.png"),
+  Horde: assetUrl("faction-icons/horde-crest.png"),
 };
 
 function getTerritoryStatus(playerFaction, territoryFaction) {
