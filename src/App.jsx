@@ -9,6 +9,7 @@ import {
   raceList,
 } from "./quests";
 import { dungeons } from "./dungeons";
+import { PROFESSION_ITEM_ICON_MAP } from "./profession-item-icon-map";
 
 const CLASSIC_TBC_DUNGEON_NAMES = new Set([
   "Ragefire Chasm",
@@ -323,11 +324,61 @@ const PROFESSION_LEVELING_STEPS = {
     { range: "360-375", qty: 17, en: "Imbued Netherweave Tunic", ru: "Чаромундир из чароткани" },
   ],
   herbalism: [
-    { range: "1-75", qty: "route", en: "Gather Peacebloom / Silverleaf / Earthroot", ru: "Собирать Мироцвет / Серебряный лист / Земляной корень" },
-    { range: "75-150", qty: "route", en: "Gather Mageroyal / Briarthorn / Stranglekelp", ru: "Собирать Магорозу / Острошип / Удавник" },
-    { range: "150-225", qty: "route", en: "Gather Bruiseweed / Wild Steelbloom / Kingsblood", ru: "Собирать Синячник / Дикий сталецвет / Королевскую кровь" },
-    { range: "225-300", qty: "route", en: "Gather Sungrass / Blindweed / Gromsblood", ru: "Собирать Солнечник / Пастушью сумку / Кровь Грома" },
-    { range: "300-375", qty: "route", en: "Gather Felweed / Dreaming Glory / Terocone", ru: "Собирать Скверноплевел / Славу сновидца / Терошишку" },
+    {
+      range: "1-75",
+      qty: "route",
+      en: "Gather Peacebloom / Silverleaf / Earthroot",
+      ru: "Собирать Мироцвет / Серебряный лист / Земляной корень",
+      mats: [
+        { en: "Peacebloom", ru: "Мироцвет", qty: "route", icon: "inv_misc_flower_02" },
+        { en: "Silverleaf", ru: "Серебряный лист", qty: "route", icon: "inv_misc_herb_10" },
+        { en: "Earthroot", ru: "Земляной корень", qty: "route", icon: "inv_misc_herb_07" },
+      ],
+    },
+    {
+      range: "75-150",
+      qty: "route",
+      en: "Gather Mageroyal / Briarthorn / Stranglekelp",
+      ru: "Собирать Магорозу / Острошип / Удавник",
+      mats: [
+        { en: "Mageroyal", ru: "Магороза", qty: "route", icon: "inv_jewelry_talisman_03" },
+        { en: "Briarthorn", ru: "Острошип", qty: "route", icon: "inv_misc_root_01" },
+        { en: "Stranglekelp", ru: "Удавник", qty: "route", icon: "inv_misc_herb_11" },
+      ],
+    },
+    {
+      range: "150-225",
+      qty: "route",
+      en: "Gather Bruiseweed / Wild Steelbloom / Kingsblood",
+      ru: "Собирать Синячник / Дикий сталецвет / Королевскую кровь",
+      mats: [
+        { en: "Bruiseweed", ru: "Синячник", qty: "route", icon: "inv_misc_herb_01" },
+        { en: "Wild Steelbloom", ru: "Дикий сталецвет", qty: "route", icon: "inv_misc_flower_01" },
+        { en: "Kingsblood", ru: "Королевская кровь", qty: "route", icon: "inv_misc_herb_03" },
+      ],
+    },
+    {
+      range: "225-300",
+      qty: "route",
+      en: "Gather Sungrass / Blindweed / Gromsblood",
+      ru: "Собирать Солнечник / Пастушью сумку / Кровь Грома",
+      mats: [
+        { en: "Sungrass", ru: "Солнечник", qty: "route", icon: "inv_misc_herb_18" },
+        { en: "Blindweed", ru: "Пастушья сумка", qty: "route", icon: "inv_misc_herb_14" },
+        { en: "Gromsblood", ru: "Кровь Грома", qty: "route", icon: "inv_misc_herb_16" },
+      ],
+    },
+    {
+      range: "300-375",
+      qty: "route",
+      en: "Gather Felweed / Dreaming Glory / Terocone",
+      ru: "Собирать Скверноплевел / Славу сновидца / Терошишку",
+      mats: [
+        { en: "Felweed", ru: "Скверноплевел", qty: "route", icon: "inv_misc_herb_felweed" },
+        { en: "Dreaming Glory", ru: "Слава сновидца", qty: "route", icon: "inv_misc_herb_dreamingglory" },
+        { en: "Terocone", ru: "Терошишка", qty: "route", icon: "inv_misc_herb_terrocone" },
+      ],
+    },
   ],
   mining: [
     {
@@ -728,7 +779,8 @@ const MATERIAL_ICON_OVERRIDES = {
 };
 
 function getMaterialIconName(materialName) {
-  const name = materialName.toLowerCase();
+  const name = materialName.toLowerCase().trim();
+  if (PROFESSION_ITEM_ICON_MAP[name]) return PROFESSION_ITEM_ICON_MAP[name];
   if (MATERIAL_ICON_OVERRIDES[name]) return MATERIAL_ICON_OVERRIDES[name];
   if (name.includes("cloth") || name.includes("thread") || name.includes("bolt")) return "inv_fabric_linen_01";
   if (name.includes("leather") || name.includes("hide")) return "inv_misc_leatherscrap_03";
@@ -746,6 +798,7 @@ function getMaterialIconName(materialName) {
 
 function getCraftIconName(professionId, recipeName) {
   const name = String(recipeName || "").toLowerCase();
+  if (PROFESSION_ITEM_ICON_MAP[name]) return PROFESSION_ITEM_ICON_MAP[name];
   if (professionId === "alchemy") {
     if (name.includes("potion")) return "inv_potion_81";
     if (name.includes("elixir")) return "inv_potion_39";
@@ -1607,9 +1660,11 @@ export default function App() {
                   />
                   <span>{language === "ru" ? step.ru : step.en}</span>
                 </span>
-                <span className="profession-plan__qty">
-                  {step.qty === "route" ? t("professionStepRoute") : `x${step.qty}`}
-                </span>
+                {step.qty !== "route" && (
+                  <span className="profession-plan__qty">
+                    {`x${step.qty}`}
+                  </span>
+                )}
               </div>
               <div className="profession-plan__materials">
                 {getStepMaterials(professionId, step, language).map((mat, matIndex) => (
