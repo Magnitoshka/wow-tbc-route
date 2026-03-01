@@ -855,8 +855,59 @@ function getCraftIconName(professionId, recipeName) {
   return getMaterialIconName(recipeName);
 }
 
+function getWowIconCandidates(iconName) {
+  return [
+    assetUrl(`wow-icons/${iconName}.jpg`),
+    assetUrl(`wow-icons/${iconName}.png`),
+  ];
+}
+
 function getWowIconUrl(iconName) {
-  return assetUrl(`wow-icons/${iconName}.jpg`);
+  return getWowIconCandidates(iconName)[0];
+}
+
+function getLocalWowIconFromAny(source) {
+  if (!source || typeof source !== "string") return getWowIconUrl("inv_misc_questionmark");
+  const normalizedSource = source.trim().toLowerCase();
+  if (/^[a-z0-9_]+$/.test(normalizedSource)) {
+    return getWowIconUrl(normalizedSource);
+  }
+  const queryMatch = normalizedSource.match(/[?&]icon=([a-z0-9_]+)/i);
+  if (queryMatch?.[1]) {
+    return getWowIconUrl(queryMatch[1].toLowerCase());
+  }
+  const fileMatch = normalizedSource.match(/\/([a-z0-9_]+)\.(jpg|jpeg|png|webp)(?:\?.*)?$/i);
+  if (fileMatch?.[1]) {
+    return getWowIconUrl(fileMatch[1].toLowerCase());
+  }
+  return getWowIconUrl("inv_misc_questionmark");
+}
+
+function handleWowIconError(event) {
+  const img = event.currentTarget;
+  const currentSrc = img.src || "";
+
+  if (img.dataset.triedCurrentPng !== "1" && /\.jpg(?:\?|$)/i.test(currentSrc)) {
+    img.dataset.triedCurrentPng = "1";
+    img.src = currentSrc.replace(/\.jpg(\?|$)/i, ".png$1");
+    return;
+  }
+
+  const questionJpg = getWowIconUrl("inv_misc_questionmark");
+  if (img.dataset.triedQuestionJpg !== "1" && currentSrc !== questionJpg) {
+    img.dataset.triedQuestionJpg = "1";
+    img.src = questionJpg;
+    return;
+  }
+
+  const questionPng = assetUrl("wow-icons/inv_misc_questionmark.png");
+  if (img.dataset.triedQuestionPng !== "1" && currentSrc !== questionPng) {
+    img.dataset.triedQuestionPng = "1";
+    img.src = questionPng;
+    return;
+  }
+
+  img.onerror = null;
 }
 
 function getStepMaterials(professionId, step, language) {
@@ -1105,7 +1156,12 @@ const STORAGE_KEY = "tbc-route-state-v1";
 const DEFAULT_ZONE_IMAGE = `data:image/svg+xml,${encodeURIComponent(
   "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='#201812'/><stop offset='100%' stop-color='#322516'/></linearGradient></defs><rect width='300' height='300' fill='url(#g)'/><circle cx='150' cy='150' r='130' fill='none' stroke='#80622d' stroke-width='8'/><text x='150' y='146' font-size='22' fill='#e8cf9f' text-anchor='middle' font-family='serif'>WoW Zone</text><text x='150' y='176' font-size='16' fill='#cbb48a' text-anchor='middle' font-family='serif'>Loading Screen</text></svg>",
 )}`;
-const assetUrl = (relativePath) => `${import.meta.env.BASE_URL}${relativePath}`;
+const APP_BUILD_ID = typeof __APP_BUILD_ID__ !== "undefined" ? __APP_BUILD_ID__ : "dev";
+const assetUrl = (relativePath) => {
+  if (!relativePath || relativePath.startsWith("data:")) return relativePath;
+  const separator = relativePath.includes("?") ? "&" : "?";
+  return `${import.meta.env.BASE_URL}${relativePath}${separator}v=${APP_BUILD_ID}`;
+};
 
 const zoneImageByRoute = {
   "Elwynn / Dun Morogh / Teldrassil / Azuremyst": assetUrl("zone-images/elwynn-forest.jpg"),
@@ -1653,10 +1709,7 @@ export default function App() {
                     src={getWowIconUrl(getCraftIconName(professionId, step.en))}
                     alt={language === "ru" ? step.ru : step.en}
                     loading="lazy"
-                    onError={(event) => {
-                      event.currentTarget.onerror = null;
-                      event.currentTarget.src = getWowIconUrl("inv_misc_questionmark");
-                    }}
+                    onError={handleWowIconError}
                   />
                   <span>{language === "ru" ? step.ru : step.en}</span>
                 </span>
@@ -1673,10 +1726,7 @@ export default function App() {
                       src={mat.icon}
                       alt={mat.label}
                       loading="lazy"
-                      onError={(event) => {
-                        event.currentTarget.onerror = null;
-                        event.currentTarget.src = getWowIconUrl("inv_misc_questionmark");
-                      }}
+                      onError={handleWowIconError}
                     />
                     <span className="profession-plan__mat-label">{mat.label}</span>
                     {mat.qty !== "route" && <strong>{`x${mat.qty}`}</strong>}
@@ -1970,12 +2020,10 @@ export default function App() {
                           onBlur={closeLootTooltip}
                         >
                           <img
-                            src={item.icon}
+                            src={getLocalWowIconFromAny(item.icon)}
                             alt={item.name}
                             loading="lazy"
-                            onError={(event) => {
-                              event.currentTarget.src = "https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg";
-                            }}
+                            onError={handleWowIconError}
                           />
                           <span className={`loot-rarity loot-rarity--${item.rarity.toLowerCase()}`}>{item.name}</span>
                         </button>
