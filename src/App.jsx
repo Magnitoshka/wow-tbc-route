@@ -855,10 +855,26 @@ function getCraftIconName(professionId, recipeName) {
   return getMaterialIconName(recipeName);
 }
 
+function normalizeWowIconName(iconName) {
+  if (!iconName || typeof iconName !== "string") return "inv_misc_questionmark";
+  const cleaned = iconName
+    .trim()
+    .toLowerCase()
+    .replace(/\\/g, "/")
+    .split("?")[0]
+    .split("#")[0]
+    .split("/")
+    .pop()
+    ?.replace(/\.(jpg|jpeg|png|webp)$/i, "");
+  if (!cleaned) return "inv_misc_questionmark";
+  return cleaned.replace(/[^a-z0-9_]/g, "");
+}
+
 function getWowIconCandidates(iconName) {
+  const normalized = normalizeWowIconName(iconName);
   return [
-    assetUrl(`wow-icons/${iconName}.jpg`),
-    assetUrl(`wow-icons/${iconName}.png`),
+    assetUrl(`wow-icons/${normalized}.jpg`),
+    assetUrl(`wow-icons/${normalized}.png`),
   ];
 }
 
@@ -868,19 +884,12 @@ function getWowIconUrl(iconName) {
 
 function getLocalWowIconFromAny(source) {
   if (!source || typeof source !== "string") return getWowIconUrl("inv_misc_questionmark");
-  const normalizedSource = source.trim().toLowerCase();
-  if (/^[a-z0-9_]+$/.test(normalizedSource)) {
-    return getWowIconUrl(normalizedSource);
-  }
-  const queryMatch = normalizedSource.match(/[?&]icon=([a-z0-9_]+)/i);
+  const normalizedSource = source.trim();
+  const queryMatch = normalizedSource.toLowerCase().match(/[?&]icon=([a-z0-9_]+)/i);
   if (queryMatch?.[1]) {
     return getWowIconUrl(queryMatch[1].toLowerCase());
   }
-  const fileMatch = normalizedSource.match(/\/([a-z0-9_]+)\.(jpg|jpeg|png|webp)(?:\?.*)?$/i);
-  if (fileMatch?.[1]) {
-    return getWowIconUrl(fileMatch[1].toLowerCase());
-  }
-  return getWowIconUrl("inv_misc_questionmark");
+  return getWowIconUrl(normalizeWowIconName(normalizedSource));
 }
 
 function handleWowIconError(event) {
